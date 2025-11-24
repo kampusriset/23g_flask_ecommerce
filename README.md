@@ -1,1 +1,1 @@
-Folder admin   berisi logika (Python code) untuk admin
+#23g_flask_ecommerce
