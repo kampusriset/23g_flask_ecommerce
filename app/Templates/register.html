@@ -1,0 +1,62 @@
+<head>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2"></div>
+
+        <div class="col-4">
+            <form action="/register" method="POST">
+                {{ form.hidden_tag() }}
+
+                <h1 class="sign">Sign Up</h1>
+                <p>Let's get you all set up so you can access your personal account.</p>
+
+                <div class="flex">
+                    <h4>Username</h4>
+
+                    <!-- Correct Flask-WTF field -->
+                    {{ form.username(id="username", class="form-control") }}
+
+                    {% if form.username.errors %}
+                    <ul>
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <h4>Password</h4>
+
+                {{ form.password(id="password", class="form-control") }}
+
+                {% if form.password.errors %}
+                <ul>
+                    {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary mt-3">
+                    {{ form.submit.label.text }}
+                </button>
+
+                <div class="register">
+                    <p>Already have an account?</p>
+                    <a href="/login">LOGIN</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-6">
+            <img src="{{ url_for('static', filename='img/Trek.png') }}" alt="truk">
+        </div>
+    </div>
+</div>
+
+<div class="garis-orange"></div>
+

@@ -1,0 +1,37 @@
+<head>
+    <title>Login</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+ <link rel="stylesheet" href="../static/css/login.css">
+ </head>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-4">
+            <form method="POST">
+                <h1 class="brand">FLASK SHOP</h1>
+                <p>Welcome Back !!!</p>
+                <h1 class="sign">Sign in</h1>
+                	{% with messages = get_flashed_messages(with_categories=true) %}
+ 	                        {% if messages %}
+ 		                        <ul class="messages">
+ 			                        {% for category, message in messages %}
+ 				                        <li class="{{ category }}">{{ message }}</li>
+ 			                        {% endfor %}
+ 		                        </ul>
+ 	                        {% endif %}
+                    {% endwith %}
+                <h4>Username<h4>
+                <input type="text" name="username" required>
+                <h4>Password</h4>
+                <input type="password" name="password" required>
+                <button type="submit" >SIGN-IN</button>
+                <div class="register"><p>I don't have an account ? </p> <a href="url"> SIGN-UP</a> </div>
+            </form>
+        </div>
+        <div class="col-6">
+            <img src="../static/img/Trek.png" alt="truk">
+        </div>
+    </div>
+</div>
+<div class="garis-orange"></div>
+

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLASK.SHOP - Heavy Duty Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg py-3">
+        <div class="container">
+            <a class="navbar-brand serif-font fw-bold" href="#">FLASK.SHOP</a>
+            <div class="collapse navbar-collapse justify-content-center">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">New Arrivals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Brands</a></li>
+                    <li class="nav-item"><a class="nav-link" class="logout" href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="input-group search-bar">
+                    <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control bg-light border-0" placeholder="Search for products...">
+                </div>
+                <i class="bi bi-cart fs-5"></i>
+                <i class="bi bi-person fs-5"></i>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section py-5 bg-light-gray">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-3 serif-font mb-4">Unstoppable<br>Performance in<br>Extreme Conditions</h1>
+                    <p class="text-muted mb-4">Trust only the best heavy machinery to scale up your business.</p>
+                    <button class="btn btn-dark rounded-pill px-5 py-2 mb-5">Buy Now</button>
+                    
+                    <div class="d-flex gap-5 stats">
+                        <div><h5 class="fw-bold mb-0">200+</h5><small class="text-muted">International Brands</small></div>
+                        <div><h5 class="fw-bold mb-0">2,000+</h5><small class="text-muted">High-Quality Products</small></div>
+                        <div><h5 class="fw-bold mb-0">30,000+</h5><small class="text-muted">Happy Customers</small></div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end position-relative">
+                    <img src="../static/img/truck1.jpg" class="img-fluid hero-img" alt="Hero Truck">
+                    <i class="bi bi-stars position-absolute top-0 end-0 text-dark fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-black py-4">
+        <div class="container d-flex justify-content-between align-items-center text-white brand-logos">
+            <span>SCANIA</span>
+            <span>VOLVO</span>
+            <span>MERCEDES-BENZ</span>
+            <span>MAN</span>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="text-center serif-font mb-5">NEW ARRIVALS</h2>
+        <div class="row g-4">
+            {% for truck in new_arrivals %}
+            <div class="col-md-3">
+                <div class="product-card bg-light p-3 rounded-4 h-100 border-0">
+                    <img src="/static/img/{{ truck.image }}" class="img-fluid mb-3 rounded-3" alt="{{ truck.name }}">
+                    <h5 class="fw-bold fs-6">{{ truck.name }}</h5>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-star-fill text-warning small me-1"></i>
+                        <small class="text-muted">{{ truck.rating }}</small>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <span class="fw-bold">${{ truck.price }}</span>
+                        {% if truck.old_price %}
+                            <span class="text-muted text-decoration-line-through small">${{ truck.old_price }}</span>
+                            <span class="badge bg-danger-subtle text-danger rounded-pill">-10%</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <button class="btn btn-outline-dark rounded-pill px-4">View All</button>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="text-center serif-font mb-5">top selling</h2>
+        <div class="row g-4">
+            {% for truck in top_selling %}
+            <div class="col-md-3">
+                <div class="product-card bg-light p-3 rounded-4 h-100 border-0">
+                    <img src="/static/img/{{ truck.image }}" class="img-fluid mb-3 rounded-3" alt="{{ truck.name }}">
+                    <h5 class="fw-bold fs-6">{{ truck.name }}</h5>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-star-fill text-warning small me-1"></i>
+                        <small class="text-muted">{{ truck.rating }}</small>
+                    </div>
+                    <div class="fw-bold">${{ truck.price }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="bg-light rounded-5 p-5">
+            <h2 class="text-center serif-font mb-5">BROWSE By Your STYLE</h2>
+            <div class="row g-4">
+                {% for style in styles %}
+                <div class="col-md-6">
+                    <div class="style-card bg-white p-3 rounded-4 position-relative overflow-hidden">
+                        <h4 class="fw-bold z-index-1 position-relative">{{ style.name }}</h4>
+                        <img src="/static/img/{{ style.image }}" class="img-fluid mt-3 rounded-3 w-100" alt="{{ style.name }}">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-light pt-5 pb-3 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4 class="serif-font fw-bold">FLASK.SHOP</h4>
+                    <p class="text-muted small">The best heavy-duty marketplace.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold">Company</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li>About</li>
+                        <li>Features</li>
+                        <li>Works</li>
+                    </ul>
+                </div>
+                </div>
+            <hr>
+            <div class="text-center text-muted small">
+                &copy; 2023 Flask.Shop. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
