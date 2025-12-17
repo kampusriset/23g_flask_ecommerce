@@ -22,3 +22,11 @@ def get_styles():
         {"name": "E-Trucks", "image": "style_etruck.jpg"},
         {"name": "Sport", "image": "style_sport.jpg"},
     ]
+
+def get_brands():
+    return [
+        {"name": "Scania", "image":"scania.jpg"},
+        {"name": "Volvo", "image":"volvo.jpg"},
+        {"name": "Mercedes", "image":"mercedes.jpg"},
+        {"name": "Man", "image":"man.jpg"},
+    ]

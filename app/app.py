@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from .data import get_new_arrivals, get_top_selling, get_styles
+from data import get_new_arrivals, get_top_selling, get_styles, get_brands
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
@@ -94,12 +94,14 @@ def dashboard():
     new_arrivals = get_new_arrivals()
     top_selling = get_top_selling()
     styles = get_styles()
+    brand = get_brands()
 
     return render_template(
         'dashboard.html',
         new_arrivals=new_arrivals,
         top_selling=top_selling,
         styles=styles,
+        brand=brand,
         username=session['username']
     )
 
