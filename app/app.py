@@ -75,16 +75,6 @@ def register():
     return render_template('register.html', form=form)
 
 
-# @app.route("/dashbord")
-# def dashboard():
-#     if 'username' in session:
-#         return render_template('dashboard.html',                       
-#     username=session['username'])
-#     else:
-#         flash('Silakan login terlebih dahulu', 'error')
-#     return redirect(url_for('login.html'))
-
-
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
@@ -113,3 +103,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
