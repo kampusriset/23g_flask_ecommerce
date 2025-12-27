@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 
 
@@ -17,11 +18,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    first_name = db.Column(db.String(150), nullable=True)
+    last_name = db.Column(db.String(150), nullable=True)
+    email = db.Column(db.String(150),  nullable=True)
+    phone = db.Column(db.String(20),  nullable=True)
+    address = db.Column(db.String(300),  nullable=True)
 
 
 @app.route('/')
@@ -94,6 +101,42 @@ def dashboard():
         brand=brand,
         username=session['username']
     )
+
+@app.route('/account/settings', methods=['GET', 'POST'])
+def account_settings():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(username=session['username']).first()
+
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        address = request.form.get('address')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if new_password:
+            if new_password == confirm_password:
+                user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            else:
+                flash("Passwords do not match")
+                return redirect(url_for('account_settings'))
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.phone = phone
+        user.address = address
+
+        db.session.commit()
+        flash("Profile updated successfully")
+        return redirect(url_for('account_settings'))
+
+    return render_template('akun.html', user=user)
+
 
 @app.route('/logout')
 def logout():

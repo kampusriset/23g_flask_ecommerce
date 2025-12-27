@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <nav>
         <div class="nav-links">
-            <a href="#">Home</a>
+            <a href="{{ url_for('dashboard') }}">Home</a>
             <a href="#">Shop <i class="fas fa-chevron-down"></i></a>
             <a href="#">New Arrivals</a>
             <a href="#">Brand</a>

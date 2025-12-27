@@ -6,4 +6,5 @@ How to open:
 4. .venv\Scripts\activate
 5. $env:FLASK_APP = "app.app"
 6. python -m pip install -r requirements.txt
-7. flask run
+7. cd app
+8. flask run
