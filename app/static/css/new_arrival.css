@@ -1,0 +1,141 @@
+/* Reset & Font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #fff;
+    font-family: 'Lato', sans-serif; /* Font untuk teks paragraf */
+    color: #333;
+    padding: 40px;
+}
+
+/* Container Utama */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Judul Atas: NEW ARRIVAL COLLECTION */
+.main-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 60px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Wrapper Flexbox untuk 2 Kolom */
+.content-wrapper {
+    display: flex;
+    align-items: center; /* Vertikal center */
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap; /* Agar responsif di HP */
+}
+
+/* --- BAGIAN KIRI: ARCH IMAGE --- */
+.image-column {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Lengkungan Luar (Warna Pink/Peach) */
+.arch-outer {
+    background-color: #F4DCD6; /* Warna peach pastel */
+    width: 450px;
+    height: 550px;
+    border-radius: 225px 225px 0 0; /* Membuat lengkungan atas */
+    padding: 20px 20px 0 20px; /* Jarak untuk border effect */
+    display: flex;
+    align-items: flex-end; /* Isi nempel ke bawah */
+}
+
+/* Lengkungan Dalam (Warna Beige/Abu muda) */
+.arch-inner {
+    background-color: #EBEBE6; /* Warna beige background gambar */
+    width: 100%;
+    height: 100%; /* Full height minus padding */
+    border-radius: 205px 205px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden; /* Agar gambar tidak keluar dari lengkungan bawah jika kepanjangan */
+}
+
+.product-img {
+    width: 90%;
+    height: auto;
+    object-fit: contain;
+    z-index: 10;
+    margin-top: 50px; /* Menurunkan gambar sedikit agar pas di tengah arch */
+}
+
+/* --- BAGIAN KANAN: TEKS --- */
+.text-column {
+    flex: 1;
+    text-align: left;
+    max-width: 500px;
+}
+
+.product-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: 25px;
+    color: #222;
+    text-transform: uppercase;
+}
+
+.product-desc {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+/* Tombol */
+.btn-details {
+    display: inline-block;
+    background-color: #F69679; /* Warna tombol orange/peach */
+    color: white;
+    padding: 15px 40px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 2px; /* Sedikit rounded di sudut */
+    transition: background 0.3s;
+}
+
+.btn-details:hover {
+    background-color: #d87c60;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+    
+    .arch-outer {
+        width: 100%;
+        max-width: 350px;
+        height: 450px;
+        border-radius: 175px 175px 0 0;
+    }
+    
+    .arch-inner {
+        border-radius: 160px 160px 0 0;
+    }
+
+    .text-column {
+        text-align: center;
+    }
+}
