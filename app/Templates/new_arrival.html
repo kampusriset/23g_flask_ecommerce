@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Arrival</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='new_arrival.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="main-header">{{ product.category }}</h1>
+
+        <div class="content-wrapper">
+            <div class="image-column">
+                <div class="arch-outer">
+                    <div class="arch-inner">
+                        <img src="{{ url_for('static', filename='images/' + product.image_url) }}" alt="Truck" class="product-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-column">
+                <h2 class="product-title">{{ product.title }}</h2>
+                <p class="product-desc">
+                    {{ product.description }}
+                </p>
+                <a href="#" class="btn-details">View Details</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
