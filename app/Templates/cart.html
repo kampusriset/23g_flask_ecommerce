@@ -11,8 +11,9 @@
 </head>
 <body>
     <div class="container py-5">
-        <div class="cart-header">
+        <div class="cart-header d-flex justify-content-between align-items-center mb-4">
             <h2>Your cart</h2>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Shopping</a>
         </div>
         <div class="row">
             <div class="col-md-8">
