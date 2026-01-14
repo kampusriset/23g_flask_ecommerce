@@ -3,32 +3,21 @@ from data import get_new_arrivals, get_top_selling, get_styles, get_brands
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secretkey123'
 app.config['WTF_CSRF_ENABLED'] = False
-import os
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'users.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'ecommerce_db'
+app.config['MYSQL_PORT'] = 3306
 
-db = SQLAlchemy(app)
+mysql = MySQL(app)
 bcrypt = Bcrypt(app)
-migrate = Migrate(app, db)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    first_name = db.Column(db.String(150), nullable=True)
-    last_name = db.Column(db.String(150), nullable=True)
-    email = db.Column(db.String(150),  nullable=True)
-    phone = db.Column(db.String(20),  nullable=True)
-    address = db.Column(db.String(300),  nullable=True)
 
 
 @app.route('/')
@@ -43,10 +32,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = User.query.filter_by(username=username).first()
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT username, password FROM users WHERE username = %s", (username,))
+        user = cur.fetchone()
+        cur.close()
 
-        if user and bcrypt.check_password_hash(user.password, password):
-            session['username'] = user.username
+        if user and bcrypt.check_password_hash(user[1], password):
+            session['username'] = user[0]
             return redirect(url_for('dashboard'))
         else:
             flash("Invalid username or password")
@@ -65,16 +57,19 @@ def register():
         username = form.username.data
         password = form.password.data
 
-        existing = User.query.filter_by(username=username).first()
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT username FROM users WHERE username = %s", (username,))
+        existing = cur.fetchone()
+
         if existing:
             flash("Username already exists")
+            cur.close()
             return redirect(url_for('register'))
 
         hashed = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = User(username=username, password=hashed)
-
-        db.session.add(new_user)
-        db.session.commit()
+        cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed))
+        mysql.connection.commit()
+        cur.close()
 
         flash("Account created successfully!")
         return redirect(url_for('login'))
@@ -107,7 +102,21 @@ def account_settings():
     if 'username' not in session:
         return redirect(url_for('login'))
 
-    user = User.query.filter_by(username=session['username']).first()
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, username, password, first_name, last_name, email, phone, address FROM users WHERE username = %s", (session['username'],))
+    user_data = cur.fetchone()
+    cur.close()
+
+    user = {
+        'id': user_data[0],
+        'username': user_data[1],
+        'password': user_data[2],
+        'first_name': user_data[3],
+        'last_name': user_data[4],
+        'email': user_data[5],
+        'phone': user_data[6],
+        'address': user_data[7]
+    }
 
     if request.method == 'POST':
         first_name = request.form.get('first_name')
@@ -120,18 +129,21 @@ def account_settings():
 
         if new_password:
             if new_password == confirm_password:
-                user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                hashed = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                cur = mysql.connection.cursor()
+                cur.execute("UPDATE users SET password = %s WHERE username = %s", (hashed, session['username']))
+                mysql.connection.commit()
+                cur.close()
             else:
                 flash("Passwords do not match")
                 return redirect(url_for('account_settings'))
 
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
-        user.phone = phone
-        user.address = address
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE users SET first_name = %s, last_name = %s, email = %s, phone = %s, address = %s WHERE username = %s",
+                    (first_name, last_name, email, phone, address, session['username']))
+        mysql.connection.commit()
+        cur.close()
 
-        db.session.commit()
         flash("Profile updated successfully")
         return redirect(url_for('account_settings'))
 
