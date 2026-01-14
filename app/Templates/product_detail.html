@@ -11,8 +11,11 @@
 </head>
 <body>
     <div class="container product-detail-container">
-        <nav class="mb-4">
-            <a href="{{ url_for('dashboard') }}">Home</a> / <a href="#">Truck</a> / {{ product.name }}
+        <nav class="mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{{ url_for('dashboard') }}">Home</a> / <a href="#">Truck</a> / {{ product.name }}
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
         </nav>
 
         <div class="row">
