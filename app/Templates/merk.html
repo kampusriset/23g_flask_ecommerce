@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Management - FLASK SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+<body>
+    <div class="row w-100 m-0">
+        <div class="col-md-4">
+        {% include 'navbar.html' %}
+    </div>
+    <div class="col-md-8">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>{{ page_title }}</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span>{{ username }}</span>
+                    <div class="user-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Form Section -->
+            {% if show_form %}
+                <div class="form-container">
+                    <div class="form-box">
+                        <h4>{% if merk %}Edit Merk{% else %}Add New Merk{% endif %}</h4>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="nama_merk">Nama Merk</label>
+                                <input type="text" id="nama_merk" name="nama_merk" placeholder="Enter brand name" value="{{ merk.nama_merk if merk else '' }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="jumlahpenjualan">Jumlah Penjualan</label>
+                                <input type="number" id="jumlahpenjualan" name="jumlahpenjualan" placeholder="Enter sales quantity" value="{{ merk.jumlahpenjualan if merk else 0 }}" min="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="keuntungan">Keuntungan</label>
+                                <input type="number" id="keuntungan" name="keuntungan" placeholder="Enter profit" value="{{ merk.keuntungan if merk else 0 }}" min="0" required>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-success">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <a href="{{ url_for('merk_list') }}" class="btn-secondary">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <!-- List Section -->
+                <div class="section-header">
+                    <h3>Daftar Merk</h3>
+                    <a href="{{ url_for('merk_list', action='create') }}" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Merk
+                    </a>
+                </div>
+
+                <!-- Merk Table -->
+                <div class="table-container">
+                    {% if merks %}
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Merk</th>
+                                    <th>Jumlah Penjualan</th>
+                                    <th>Keuntungan</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in merks %}
+                                    <tr>
+                                        <td>{{ m.merk_id }}</td>
+                                        <td>{{ m.nama_merk }}</td>
+                                        <td>{{ m.jumlahpenjualan }}</td>
+                                        <td>Rp {{ "{:,.0f}".format(m.keuntungan) }}</td>
+                                        <td>
+                                            <a href="{{ url_for('merk_list', merk_id=m.merk_id, action='edit') }}" class="btn-icon edit">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form method="POST" action="{{ url_for('merk_delete', merk_id=m.merk_id) }}" style="display: inline;">
+                                                <button type="submit" class="btn-icon delete" onclick="return confirm('Are you sure you want to delete this merk?')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No data available</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Charts Section -->
+                {% if merks %}
+                    <div class="charts-section" style="margin-top: 40px;">
+                        <h3>Statistik Penjualan Merk</h3>
+                        <div class="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div class="chart-item" style="flex: 1; min-width: 45%; text-align: center;">
+                                <h4>Bar Chart - Jumlah Penjualan</h4>
+                                <img src="{{ url_for('static', filename='merk_bar.png') }}?t={{ range(1, 1000000) | random }}" alt="Bar Chart" style="max-width: 100%; height: auto;">
+                            </div>
+                            <div class="chart-item" style="flex: 1; min-width: 45%; text-align: center;">
+                                <h4>Pie Chart - Proporsi Penjualan</h4>
+                                <img src="{{ url_for('static', filename='merk_pie.png') }}?t={{ range(1, 1000000) | random }}" alt="Pie Chart" style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>
+

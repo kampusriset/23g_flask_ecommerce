@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(150),
     email VARCHAR(150),
     phone VARCHAR(20),
-    address VARCHAR(300)
+    address VARCHAR(300),
+    admin INT(2) DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS merk (

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers Management - FLASK SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+<body>
+    <div class="row w-100 m-0">
+        <div class="col-md-4">
+        {% include 'navbar.html' %}
+        </div>
+        <div class="col-md-8">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>{{ page_title }}</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span>{{ username }}</span>
+                    <div class="user-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Header -->
+            <div class="section-header">
+                <h3>Daftar Customers</h3>
+                <span class="customer-count" style="color: #6b7280; font-size: 14px;">
+                    Total: {{ customers|length }} customers
+                </span>
+            </div>
+
+            <!-- Customers Table -->
+            <div class="table-container">
+                {% if customers %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers %}
+                                <tr>
+                                    <td>{{ customer.id }}</td>
+                                    <td>{{ customer.username }}</td>
+                                    <td>
+                                        {% if customer.first_name or customer.last_name %}
+                                            {{ customer.first_name }} {{ customer.last_name }}
+                                        {% else %}
+                                            <span style="color: #d1d5db;">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if customer.email %}
+                                            {{ customer.email }}
+                                        {% else %}
+                                            <span style="color: #d1d5db;">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if customer.phone %}
+                                            {{ customer.phone }}
+                                        {% else %}
+                                            <span style="color: #d1d5db;">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if customer.address %}
+                                            {{ customer.address }}
+                                        {% else %}
+                                            <span style="color: #d1d5db;">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No customers available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FLASK SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+<body>
+    <div class="row w-100 m-0">
+        <div class="col-md-4">
+    {% include 'navbar.html' %}
+    </div>
+    <div class="col-md-8">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>{{ page_title }}</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span>{{ username }}</span>
+                    <div class="user-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            <div style="text-align: center; padding: 60px 20px; color: #9ca3af;">
+                <i class="fas fa-chart-bar" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <p style="font-size: 18px;">Welcome to Admin Dashboard</p>
+                <p style="font-size: 14px;">Select a menu item to get started</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
