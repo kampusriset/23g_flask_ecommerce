@@ -1,6 +1,9 @@
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, send_file
 import matplotlib.pyplot as plt
 import os
+import csv
+import io
+from datetime import datetime
 
 def admin():
     if 'username' not in session:
@@ -25,12 +28,12 @@ def merk_list(mysql):
     merk = None
     show_form = False
     
-    # Check if form should be shown
+
     if action == 'create':
         show_form = True
     elif action == 'edit' and merk_id:
         show_form = True
-        # Get merk data for editing
+
         cur = mysql.connection.cursor()
         cur.execute("SELECT merk_id, nama_merk, jumlahpenjualan, keuntungan FROM merk WHERE merk_id = %s", (merk_id,))
         row = cur.fetchone()
@@ -46,7 +49,7 @@ def merk_list(mysql):
         else:
             flash("Merk not found", "error")
     
-    # Handle form submission
+
     if request.method == 'POST':
         nama_merk = request.form.get('nama_merk', '').strip()
         jumlahpenjualan = request.form.get('jumlahpenjualan', 0)
@@ -59,12 +62,12 @@ def merk_list(mysql):
         try:
             cur = mysql.connection.cursor()
             if merk_id:
-                # Update existing
+
                 cur.execute("UPDATE merk SET nama_merk = %s, jumlahpenjualan = %s, keuntungan = %s WHERE merk_id = %s",
                             (nama_merk, jumlahpenjualan, keuntungan, merk_id))
                 flash("Merk updated successfully", "success")
             else:
-                # Create new
+
                 cur.execute("INSERT INTO merk (nama_merk, jumlahpenjualan, keuntungan) VALUES (%s, %s, %s)",
                             (nama_merk, jumlahpenjualan, keuntungan))
                 flash("Merk created successfully", "success")
@@ -77,7 +80,7 @@ def merk_list(mysql):
             flash(f"Error: {str(e)}", "error")
             return redirect(url_for('merk_list', action=action, merk_id=merk_id))
     
-    # Get all merks for listing
+
     cur = mysql.connection.cursor()
     cur.execute("SELECT merk_id, nama_merk, jumlahpenjualan, keuntungan FROM merk ORDER BY merk_id DESC")
     merks_data = cur.fetchall()
@@ -92,18 +95,18 @@ def merk_list(mysql):
             'keuntungan': row[3]
         })
     
-    # Generate charts
+
     if merks:
         nama_merk_list = [m['nama_merk'] for m in merks]
         jumlahpenjualan_list = [m['jumlahpenjualan'] for m in merks]
         keuntungan_list = [m['keuntungan'] for m in merks]
         
-        # Ensure static directory exists
+
         static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
         if not os.path.exists(static_dir):
             os.makedirs(static_dir)
         
-        # Bar Chart - Jumlah Penjualan
+
         plt.figure(figsize=(10, 6))
         plt.bar(nama_merk_list, jumlahpenjualan_list, color='steelblue')
         plt.title('Jumlah Penjualan per Merk')
@@ -114,7 +117,7 @@ def merk_list(mysql):
         plt.savefig(os.path.join(static_dir, 'merk_bar.png'), dpi=100, bbox_inches='tight')
         plt.close()
         
-        # Pie Chart - Proporsi Penjualan
+
         plt.figure(figsize=(10, 8))
         plt.pie(jumlahpenjualan_list, labels=nama_merk_list, autopct='%1.1f%%', startangle=90)
         plt.title('Proporsi Penjualan per Merk')
@@ -158,7 +161,7 @@ def customer_list(mysql):
         flash("You do not have admin privileges")
         return redirect(url_for('dashboard'))
     
-    # Get all non-admin users
+
     cur = mysql.connection.cursor()
     cur.execute("SELECT id, username, first_name, last_name, email, phone, address FROM users WHERE admin = 0 ORDER BY id DESC")
     customers_data = cur.fetchall()
@@ -182,3 +185,40 @@ def customer_list(mysql):
                          page_title='Customers Management',
                          active_page='customers')
 
+def export_merk_csv(mysql):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    if session.get('admin') != 1:
+        flash("You do not have admin privileges")
+        return redirect(url_for('dashboard'))
+    
+    try:
+
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT merk_id, nama_merk, jumlahpenjualan, keuntungan FROM merk ORDER BY merk_id")
+        merks_data = cur.fetchall()
+        cur.close()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        writer.writerow(['ID', 'Nama Merk', 'Jumlah Penjualan', 'Keuntungan (jt)'])
+        
+        for row in merks_data:
+            writer.writerow([row[0], row[1], row[2], row[3]])
+        
+        output.seek(0)
+        
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'merk_export_{timestamp}.csv'
+        
+        return send_file(
+            io.BytesIO(output.getvalue().encode()),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=filename
+        )
+    except Exception as e:
+        flash(f"Error exporting data: {str(e)}", "error")
+        return redirect(url_for('merk_list'))

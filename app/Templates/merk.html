@@ -78,9 +78,14 @@
                 <!-- List Section -->
                 <div class="section-header">
                     <h3>Daftar Merk</h3>
-                    <a href="{{ url_for('merk_list', action='create') }}" class="btn-primary">
-                        <i class="fas fa-plus"></i> Add New Merk
-                    </a>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('merk_list', action='create') }}" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add New Merk
+                        </a>
+                        <a href="{{ url_for('export_merk_csv') }}" class="btn-primary" style="background-color: #28a745;">
+                            <i class="fas fa-download"></i> Export to CSV
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Merk Table -->
@@ -102,7 +107,7 @@
                                         <td>{{ m.merk_id }}</td>
                                         <td>{{ m.nama_merk }}</td>
                                         <td>{{ m.jumlahpenjualan }}</td>
-                                        <td>Rp {{ "{:,.0f}".format(m.keuntungan) }}</td>
+                                        <td>{{ m.keuntungan }} jt</td>
                                         <td>
                                             <a href="{{ url_for('merk_list', merk_id=m.merk_id, action='edit') }}" class="btn-icon edit">
                                                 <i class="fas fa-edit"></i> Edit

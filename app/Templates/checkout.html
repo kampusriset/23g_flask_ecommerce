@@ -51,21 +51,21 @@
                         {% for it in items %}
                             <li>
                                 <span>{{ it.name }} x{{ it.qty }}</span>
-                                <span>${{ (it.price * it.qty)|round(2) }}</span>
+                                <span>Rp{{ (it.price * it.qty)|round(2) }} Jt</span>
                             </li>
                         {% endfor %}
                     </ul>
                     <div class="summary-row">
                         <div>SUBTOTAL</div>
-                        <div>${{ subtotal }}</div>
+                        <div>Rp{{ subtotal }}Jt</div>
                     </div>
                     <div class="summary-row">
                         <div>SHIPPING</div>
-                        <div>${{ delivery }}</div>
+                        <div>Rp{{ delivery }}Jt</div>
                     </div>
                     <div class="summary-row total">
                         <div>Total</div>
-                        <div>${{ total }}</div>
+                        <div>Rp{{ total }}Jt</div>
                     </div>
                 </div>
             </div>

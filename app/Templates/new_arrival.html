@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Arrival</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='new_arrival.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_arrival.css') }}">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
             <div class="image-column">
                 <div class="arch-outer">
                     <div class="arch-inner">
-                        <img src="{{ url_for('static', filename='images/' + product.image_url) }}" alt="Truck" class="product-img">
+                        <img src="{{ url_for('static', filename='img/' + product.image_url) }}" alt="Truck" class="product-img">
                     </div>
                 </div>
             </div>
