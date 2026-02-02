@@ -16,9 +16,19 @@ bcrypt = Bcrypt(app)
 
 @app.route('/')
 def home():
-    if 'username' in session:
-        return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
+    # Public home page (no login required)
+    new_arrivals = get_new_arrivals()
+    top_selling = get_top_selling()
+    styles = get_styles()
+    brand = get_brands()
+    return render_template(
+        'home.html',
+        new_arrivals=new_arrivals,
+        top_selling=top_selling,
+        styles=styles,
+        brand=brand,
+        username=session.get('username')
+    )
 
 # Tempat Login
 
@@ -32,7 +42,7 @@ def login():
 def register():
     return user_controller.register(mysql, bcrypt)
 
-@app.route('/dashboard')
+@app.route('/home')
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('login'))
@@ -44,7 +54,7 @@ def dashboard():
     brand = get_brands()
 
     return render_template(
-        'dashboard.html',
+        'home.html',
         new_arrivals=new_arrivals,
         top_selling=top_selling,
         styles=styles,
@@ -76,6 +86,11 @@ def update_cart():
 def checkout():
     return halamanutama_controller.checkout(mysql)
 
+
+@app.route('/history')
+def history():
+    return halamanutama_controller.history(mysql)
+
 # Profile Settings
 @app.route('/account/settings', methods=['GET', 'POST'])
 def account_settings():
@@ -91,7 +106,7 @@ def logout():
     #Login Halaman Admin
 @app.route('/admin')
 def admin():
-    return admin_controller.admin()
+    return admin_controller.admin(mysql)
 
 @app.route('/admin/merk', methods=['GET', 'POST'])
 def merk_list():
@@ -105,6 +120,17 @@ def merk_delete(merk_id):
 def export_merk_csv():
     return admin_controller.export_merk_csv(mysql)
 
+@app.route('/admin/orders', methods=['GET', 'POST'])
+def order_list():
+    return admin_controller.order_list(mysql)
+
+@app.route('/admin/products', methods=['GET', 'POST'])
+def product_list():
+    return admin_controller.product_list(mysql)
+
+@app.route('/admin/products/<int:product_id>/delete', methods=['POST'])
+def product_delete(product_id):
+    return admin_controller.product_delete(mysql, product_id)
 
 @app.route('/admin/customers')
 def customer_list():

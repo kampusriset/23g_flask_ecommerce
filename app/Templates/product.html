@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Management - FLASK SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+<body>
+    <div class="row w-100 m-0">
+        <div class="col-md-4">
+        {% include 'navbar.html' %}
+    </div>
+    <div class="col-md-8">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>{{ page_title }}</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span>{{ username }}</span>
+                    <div class="user-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Form Section -->
+            {% if show_form %}
+                <div class="form-container">
+                    <div class="form-box">
+                        <h4>{% if product %}Edit Produk{% else %}Tambah Produk Baru{% endif %}</h4>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="nama_produk">Nama Produk</label>
+                                <input type="text" id="nama_produk" name="nama_produk" placeholder="Masukkan nama produk" value="{{ product.nama_produk if product else '' }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="harga">Harga (Million)</label>
+                                <input type="number" id="harga" name="harga" placeholder="Masukkan harga" value="{{ product.harga if product else 0 }}" min="0" step="100" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="stok">Stok</label>
+                                <input type="number" id="stok" name="stok" placeholder="Masukkan jumlah stok" value="{{ product.stok if product else 0 }}" min="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="merk_id">Pilih Merk</label>
+                                <select id="merk_id" name="merk_id" class="form-control">
+                                    <option value="">-- Pilih Merk --</option>
+                                    {% for merk in merks %}
+                                        <option value="{{ merk.merk_id }}" {% if product and product.merk_id == merk.merk_id %}selected{% endif %}>
+                                            {{ merk.nama_merk }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-success">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                                <a href="{{ url_for('product_list') }}" class="btn-secondary">
+                                    <i class="fas fa-times"></i> Batal
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <!-- List Section -->
+                <div class="section-header">
+                    <h3>Daftar Produk</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('product_list', action='create') }}" class="btn-primary">
+                            <i class="fas fa-plus"></i> Tambah Produk
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="table-container">
+                    {% if products %}
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Produk</th>
+                                    <th>Merk</th>
+                                    <th>Harga</th>
+                                    <th>Stok</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in products %}
+                                    <tr>
+                                        <td>#{{ p.produk_id }}</td>
+                                        <td>{{ p.nama_produk }}</td>
+                                        <td>{{ p.nama_merk }}</td>
+                                        <td>{{ p.harga }} Million</td>
+                                        <td>
+                                            {% if p.stok > 10 %}
+                                                <span style="color: green; font-weight: bold;">{{ p.stok }}</span>
+                                            {% elif p.stok > 0 %}
+                                                <span style="color: orange; font-weight: bold;">{{ p.stok }}</span>
+                                            {% else %}
+                                                <span style="color: red; font-weight: bold;">{{ p.stok }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('product_list', product_id=p.produk_id, action='edit') }}" class="btn-icon edit">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form method="POST" action="{{ url_for('product_delete', product_id=p.produk_id) }}" style="display: inline;">
+                                                <button type="submit" class="btn-icon delete" onclick="return confirm('Yakin hapus produk ini?')">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Tidak ada produk</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>

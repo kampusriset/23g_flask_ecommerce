@@ -83,7 +83,7 @@
                             <i class="fas fa-plus"></i> Add New Merk
                         </a>
                         <a href="{{ url_for('export_merk_csv') }}" class="btn-primary" style="background-color: #28a745;">
-                            <i class="fas fa-download"></i> Export to CSV
+                            <i class="fas fa-download"></i> Export to Excel
                         </a>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                                         <td>{{ m.merk_id }}</td>
                                         <td>{{ m.nama_merk }}</td>
                                         <td>{{ m.jumlahpenjualan }}</td>
-                                        <td>{{ m.keuntungan }} jt</td>
+                                        <td>{{ m.keuntungan }} Million</td>
                                         <td>
                                             <a href="{{ url_for('merk_list', merk_id=m.merk_id, action='edit') }}" class="btn-icon edit">
                                                 <i class="fas fa-edit"></i> Edit

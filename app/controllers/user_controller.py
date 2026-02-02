@@ -19,7 +19,7 @@ def login(mysql, bcrypt):
             if user[3] == 1:  # Check if admin
                 return redirect(url_for('admin'))
             else:
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('home'))
         else:
             flash("Invalid username or password")
 

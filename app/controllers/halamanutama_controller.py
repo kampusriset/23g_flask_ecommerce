@@ -21,7 +21,7 @@ def add_to_cart():
     product = get_product_by_id(product_id)
     if not product:
         flash('Product not found', 'danger')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('home'))
 
     cart = session['cart']
     if str(product_id) in cart:
@@ -36,7 +36,19 @@ def add_to_cart():
         }
     
     session.modified = True
-    flash(f'{product["name"]} added to cart!', 'success')
+    msg = f'{product["name"]} added to cart!'
+    # If request is AJAX (fetch), return JSON so client can show popup without redirect
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return { 'success': True, 'message': msg }
+
+    flash(msg, 'success')
+    try:
+        pid = int(product_id)
+    except Exception:
+        pid = None
+
+    if pid == 1:
+        return redirect(url_for('product_detail', product_id=pid))
     return redirect(url_for('cart'))
 
 def cart():
@@ -117,10 +129,16 @@ def checkout(mysql):
         try:
             cur = mysql.connection.cursor()
             
+            # Get user_id from username
+            cur.execute('SELECT id FROM users WHERE username = %s', (session['username'],))
+            user_result = cur.fetchone()
+            user_id = user_result[0] if user_result else None
+            
             if 'cart' in session:
                 for product_id, item in session['cart'].items():
                     quantity = item['quantity']
                     price = parse_price(item['price'])
+                    jumlah_pembayaran = price * quantity
                     
                     print(f"DEBUG: Processing product_id={product_id}, quantity={quantity}, price={price}", file=sys.stderr)
                    
@@ -143,6 +161,14 @@ def checkout(mysql):
                         ''', (quantity, profit, merk_id))
                         
                         print(f"DEBUG: Rows affected: {cur.rowcount}", file=sys.stderr)
+                        
+                        # Insert into history table
+                        if user_id:
+                            cur.execute('''
+                                INSERT INTO history (user_id, produk_id, banyak, jumlah_pembayaran, status_produk)
+                                VALUES (%s, %s, %s, %s, %s)
+                            ''', (user_id, int(product_id), quantity, jumlah_pembayaran, 'Pending'))
+                            print(f"DEBUG: Inserted history for product_id={product_id}", file=sys.stderr)
                     else:
                         print(f"DEBUG: Product not found for product_id={product_id}", file=sys.stderr)
             
@@ -152,7 +178,7 @@ def checkout(mysql):
             flash('Order placed successfully!', 'success')
             session['cart'] = {}
             session.modified = True
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('history'))
         except Exception as e:
             print(f"DEBUG ERROR: {str(e)}", file=sys.stderr)
             import traceback
@@ -203,7 +229,7 @@ def newarrivals():
     featured_product = new_arrivals[0] if new_arrivals else None
     
     if not featured_product:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('home'))
     
     
     product = {
@@ -222,7 +248,7 @@ def productdetails(product_id):
     
     product = get_product_by_id(product_id)
     if not product:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('home'))
     
     
     reviews = [
@@ -247,3 +273,71 @@ def productdetails(product_id):
     ]
     
     return render_template('product_detail.html', product=product, reviews=reviews)
+
+def history(mysql):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    orders = []
+    total_spent = 0
+    order_dict = {}
+    
+    try:
+        cur = mysql.connection.cursor()
+        
+        # Get user_id from username
+        cur.execute('SELECT id FROM users WHERE username = %s', (username,))
+        user_result = cur.fetchone()
+        if not user_result:
+            cur.close()
+            return render_template('history.html', orders=[], total_spent=0)
+        
+        user_id = user_result[0]
+        
+        # Fetch all history entries for this user from the history table
+        # Group by date to create orders
+        cur.execute('''
+            SELECT h.history_id, h.produk_id, h.banyak, h.jumlah_pembayaran, 
+                   h.tanggal_pembelian, h.status_produk, p.nama_produk, p.harga
+            FROM history h
+            JOIN produk p ON h.produk_id = p.produk_id
+            WHERE h.user_id = %s
+            ORDER BY h.tanggal_pembelian DESC
+        ''', (user_id,))
+        
+        history_rows = cur.fetchall()
+        
+        # Create separate order entry for each history record
+        if history_rows:
+            for row in history_rows:
+                history_id, produk_id, banyak, jumlah_pembayaran, tanggal_pembelian, status_produk, nama_produk, harga = row
+                
+                item_total = parse_price(jumlah_pembayaran)
+                orders.append({
+                    'id': history_id,
+                    'date': str(tanggal_pembelian) if tanggal_pembelian else 'Unknown',
+                    'status': status_produk or 'sedang dalam pengiriman',
+                    'products': [{
+                        'id': produk_id,
+                        'name': nama_produk,
+                        'price': parse_price(harga),
+                        'image': 'scania.jpg',
+                        'qty': banyak
+                    }],
+                    'total': item_total
+                })
+                total_spent += item_total
+        
+    except Exception as e:
+        print(f"DEBUG: Error fetching history: {str(e)}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        orders = []
+        total_spent = 0
+    
+    return render_template(
+        'history.html',
+        orders=orders,
+        total_spent=total_spent
+    )

@@ -32,13 +32,58 @@
         </div>
         <!-- Content Area -->
         <div class="content-area">
-            <div style="text-align: center; padding: 60px 20px; color: #9ca3af;">
-                <i class="fas fa-chart-bar" style="font-size: 48px; margin-bottom: 20px;"></i>
-                <p style="font-size: 18px;">Welcome to Admin Dashboard</p>
-                <p style="font-size: 14px;">Select a menu item to get started</p>
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card customers">
+                    <i class="fas fa-users"></i>
+                    <h3>Total Customers</h3>
+                    <div class="number">{{ total_customers }}</div>
+                </div>
+                <div class="stat-card products">
+                    <i class="fas fa-box"></i>
+                    <h3>Total Products</h3>
+                    <div class="number">{{ total_products }}</div>
+                </div>
+                <div class="stat-card orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Total Orders</h3>
+                    <div class="number">{{ total_orders }}</div>
+                </div>
+                <div class="stat-card revenue">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Total Revenue</h3>
+                    <div class="number">{{ total_revenue }} M</div>
+                </div>
             </div>
+
+            <!-- Charts Section -->
+            {% if has_merks %}
+                <div style="margin-top: 40px;">
+                    <h3 style="margin-bottom: 20px; color: #333;">Statistik Penjualan Merk</h3>
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h4>Bar Chart - Jumlah Penjualan</h4>
+                            <img src="{{ url_for('static', filename='merk_bar.png') }}?t={{ range(1, 1000000) | random }}" alt="Bar Chart">
+                        </div>
+                        <div class="chart-card">
+                            <h4>Pie Chart - Proporsi Penjualan</h4>
+                            <img src="{{ url_for('static', filename='merk_pie.png') }}?t={{ range(1, 1000000) | random }}" alt="Pie Chart">
+                        </div>
+                        <div class="chart-card">
+                            <h4>Bar Chart - Keuntungan per Merk</h4>
+                            <img src="{{ url_for('static', filename='merk_profit.png') }}?t={{ range(1, 1000000) | random }}" alt="Profit Chart">
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 40px 20px; color: #9ca3af;">
+                    <i class="fas fa-chart-bar" style="font-size: 48px; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <p style="font-size: 16px;">Tambahkan data merk untuk melihat statistik</p>
+                </div>
+            {% endif %}
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>

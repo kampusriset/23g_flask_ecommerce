@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management - FLASK SHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+<body>
+    <div class="row w-100 m-0">
+        <div class="col-md-4">
+        {% include 'navbar.html' %}
+    </div>
+    <div class="col-md-8">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>{{ page_title }}</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span>{{ username }}</span>
+                    <div class="user-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content Area -->
+        <div class="content-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- List Section -->
+            <div class="section-header">
+                <h3>Daftar Pesanan</h3>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-container">
+                {% if orders %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Produk</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                                <th>Tanggal</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>#{{ order.history_id }}</td>
+                                    <td>{{ order.username }}</td>
+                                    <td>{{ order.nama_produk }}</td>
+                                    <td>{{ order.banyak }}</td>
+                                    <td>{{ order.jumlah_pembayaran }} M</td>
+                                    <td>{{ order.tanggal_pembelian.strftime('%d %b %Y %H:%M') if order.tanggal_pembelian else 'N/A' }}</td>
+                                    <td>
+                                        {% if order.status_produk == 'Pending' %}
+                                            <span class="status-badge status-pending">{{ order.status_produk }}</span>
+                                        {% elif order.status_produk == 'Completed' %}
+                                            <span class="status-badge status-completed">{{ order.status_produk }}</span>
+                                        {% elif order.status_produk == 'Shipped' %}
+                                            <span class="status-badge status-shipped">{{ order.status_produk }}</span>
+                                        {% elif order.status_produk == 'Cancelled' %}
+                                            <span class="status-badge status-cancelled">{{ order.status_produk }}</span>
+                                        {% else %}
+                                            <span class="status-badge">{{ order.status_produk }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn-icon edit" onclick="showDetail({{ order.history_id }})">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Tidak ada pesanan</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="detail-modal" id="detailModal">
+    <div class="modal-content-box">
+        <div class="modal-header-box">
+            <h3>Detail Pesanan</h3>
+            <button class="close-btn" onclick="closeDetail()">&times;</button>
+        </div>
+        <form method="POST" id="statusForm">
+            <div class="detail-item">
+                <label>Order ID</label>
+                <div class="value" id="detailOrderId">#</div>
+                <input type="hidden" name="order_id" id="hiddenOrderId">
+            </div>
+            <div class="detail-item">
+                <label>Customer</label>
+                <div class="value" id="detailUsername">-</div>
+            </div>
+            <div class="detail-item">
+                <label>Produk</label>
+                <div class="value" id="detailProduct">-</div>
+            </div>
+            <div class="detail-item">
+                <label>Jumlah</label>
+                <div class="value" id="detailQty">-</div>
+            </div>
+            <div class="detail-item">
+                <label>Total Pembayaran</label>
+                <div class="value" id="detailTotal">-</div>
+            </div>
+            <div class="detail-item">
+                <label>Tanggal Pembelian</label>
+                <div class="value" id="detailDate">-</div>
+            </div>
+            <div class="detail-item">
+                <label for="statusSelect">Status Pesanan</label>
+                <select name="status" id="statusSelect" class="form-control">
+                    <option value="Pending">Pending</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-success" style="flex: 1;">
+                    <i class="fas fa-save"></i> Update Status
+                </button>
+                <button type="button" class="btn-secondary" onclick="closeDetail()" style="flex: 1;">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const orderData = {
+        {% for order in orders %}
+        {{ order.history_id }}: {
+            'history_id': {{ order.history_id }},
+            'username': '{{ order.username }}',
+            'nama_produk': '{{ order.nama_produk }}',
+            'banyak': {{ order.banyak }},
+            'jumlah_pembayaran': {{ order.jumlah_pembayaran }},
+            'tanggal_pembelian': '{{ order.tanggal_pembelian.strftime('%d %b %Y %H:%M') if order.tanggal_pembelian else 'N/A' }}',
+            'status_produk': '{{ order.status_produk }}'
+        },
+        {% endfor %}
+    };
+
+    function showDetail(orderId) {
+        const data = orderData[orderId];
+        if (!data) return;
+
+        document.getElementById('detailOrderId').textContent = '#' + data.history_id;
+        document.getElementById('hiddenOrderId').value = orderId;
+        document.getElementById('detailUsername').textContent = data.username;
+        document.getElementById('detailProduct').textContent = data.nama_produk;
+        document.getElementById('detailQty').textContent = data.banyak;
+        document.getElementById('detailTotal').textContent = data.jumlah_pembayaran + ' Million';
+        document.getElementById('detailDate').textContent = data.tanggal_pembelian;
+        document.getElementById('statusSelect').value = data.status_produk;
+
+        document.getElementById('detailModal').classList.add('show');
+    }
+
+    function closeDetail() {
+        document.getElementById('detailModal').classList.remove('show');
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('detailModal');
+        if (event.target === modal) {
+            modal.classList.remove('show');
+        }
+    }
+</script>
+</body>
+</html>

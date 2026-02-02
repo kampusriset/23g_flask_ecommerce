@@ -13,7 +13,7 @@
     <div class="container py-5">
         <div class="cart-header d-flex justify-content-between align-items-center mb-4">
             <h2>Your cart</h2>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Shopping</a>
+            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Shopping</a>
         </div>
         <div class="row">
             <div class="col-md-8">
@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                             <div class="item-controls">
-                                <div class="item-price">Rp{{ it.price }} Jt</div>
+                                <div class="item-price">Rp{{ it.price }} Million</div>
                                 <form action="{{ url_for('update_cart') }}" method="post" class="qty-update-form">
                                     <input type="hidden" name="product_id" value="{{ it.id }}">
                                     <input type="number" name="quantity" min="0" value="{{ it.qty }}">
@@ -53,7 +53,7 @@
                     <div class="summary-title">Order Summary</div>
                     <div class="summary-row">
                         <div>Subtotal</div>
-                        <div>Rp{{ subtotal }}</div>
+                        <div>Rp{{ subtotal }}Milion</div>
                     </div>
                     <div class="summary-row">
                         <div>Discount</div>
@@ -61,11 +61,11 @@
                     </div>
                     <div class="summary-row">
                         <div>Delivery Fee</div>
-                        <div>Rp{{ delivery }}</div>
+                        <div>Rp{{ delivery }}Milion</div>
                     </div>
                     <div class="summary-row total">
                         <div>Total</div>
-                        <div>Rp{{ total }}</div>
+                        <div>Rp{{ total }}Milion</div>
                     </div>
                     <a href="{{ url_for('checkout') }}" class="checkout-btn">Go to Checkout</a>
                 </div>

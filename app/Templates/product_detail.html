@@ -13,9 +13,9 @@
     <div class="container product-detail-container">
         <nav class="mb-4 d-flex justify-content-between align-items-center">
             <div>
-                <a href="{{ url_for('dashboard') }}">Home</a> / <a href="#">Truck</a> / {{ product.name }}
+                <a href="{{ url_for('home') }}">Home</a> / <a href="#">Truck</a> / {{ product.name }}
             </div>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
         </nav>
 
         <div class="row">
@@ -31,14 +31,14 @@
                     <strong>{{ product.rating }}</strong>
                 </div>
                 <div class="price-section">
-                    <span class="current-price">Rp{{ product.price }}Jt</span>
+                    <span class="current-price">Rp{{ product.price }}Milion</span>
                     {% if product.old_price %}
-                        <span class="old-price">Rp{{ product.old_price }}</span>
+                        <span class="old-price">Rp{{ product.old_price }}Milion</span>
                         <span class="discount-badge">-10%</span>
                     {% endif %}
                 </div>
 
-                <form action="{{ url_for('add_to_cart') }}" method="post" class="quantity-selector">
+                <form id="addToCartForm" action="{{ url_for('add_to_cart') }}" method="post" class="quantity-selector">
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <div class="quantity-input-group">
                         <button type="button" onclick="this.nextElementSibling.stepDown()">−</button>
@@ -75,6 +75,79 @@
         </div>
 
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Modal used for both flashed messages and AJAX add-to-cart confirmation -->
+        <div class="modal fade" id="flashModal" tabindex="-1" aria-labelledby="flashModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="flashModalLabel">Notification</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- message will be injected by JS -->
+                    </div>
+                    <div class="modal-footer">
+                        <a href="{{ url_for('cart') }}" class="btn btn-primary">Go to Cart</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function showModal(msg) {
+                const modalEl = document.getElementById('flashModal');
+                modalEl.querySelector('.modal-body').innerText = msg;
+                const bsModal = new bootstrap.Modal(modalEl);
+                bsModal.show();
+            }
+
+            // Show flashed messages (server-side flash)
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                (function(){
+                    const _flashMessages = {{ messages|tojson }};
+                    if (_flashMessages && _flashMessages.length) {
+                        const msg = Array.isArray(_flashMessages[0]) ? _flashMessages[0][1] : _flashMessages[0];
+                        document.addEventListener('DOMContentLoaded', () => showModal(msg));
+                    }
+                })();
+            {% endif %}
+            {% endwith %}
+
+            // Intercept add-to-cart form and submit via fetch to show popup immediately
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('addToCartForm');
+                if (!form) return;
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fd = new FormData(form);
+                    try {
+                        const resp = await fetch(form.action, {
+                            method: 'POST',
+                            body: fd,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        if (!resp.ok) {
+                            // fallback to full submit
+                            form.submit();
+                            return;
+                        }
+                        const data = await resp.json().catch(() => null);
+                        if (data && data.success) {
+                            showModal(data.message || 'Added to cart');
+                        } else {
+                            // if server didn't return JSON, reload to maintain current behavior
+                            location.reload();
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        form.submit();
+                    }
+                });
+            });
+        </script>
 </body>
 </html>

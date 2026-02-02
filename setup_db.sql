@@ -31,6 +31,21 @@ CREATE TABLE IF NOT EXISTS produk (
     FOREIGN KEY (merk_id) REFERENCES merk(merk_id)
 );
 
+CREATE TABLE IF NOT EXISTS history (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    produk_id INT,
+    banyak INT(150) NOT NULL,
+    jumlah_pembayaran INT(150) NOT NULL,
+    tanggal_pembelian DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status_produk VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (produk_id) REFERENCES produk(produk_id)
+);
+
+INSERT INTO users (id,username,password,admin) VALUES
+(1,'admin','$2y$10$dRXQRhnogFj8tdi5roMW1eN13bBqxopuGeB6kZ.Nkvjjfb29qRk52',1);
+
 INSERT INTO merk (nama_merk, jumlahpenjualan, keuntungan) VALUES
 ('Scania', 0, 0),
 ('Volvo', 0, 0),
