@@ -1,7 +1,23 @@
-<<<<<<< HEAD
+# Nama Aplikasi
 # 23G Flask E-Commerce
 
 Aplikasi e-commerce untuk mengelola penjualan truck dengan fitur admin dan user.
+#Kegunaan Aplikasi 
+Aplikasi ini berfungsi sebagai etalase digital yang memudahkan calon pembeli untuk menelusuri katalog truk yang tersedia. Pengunjung dapat melihat foto dan spesifikasi teknis secara detail, melakukan pencarian spesifik berdasarkan merek atau tahun pembuatan, serta langsung menghubungi penjual melalui fitur kontak yang terintegrasi. Hal ini membuat pengalaman mencari truk bekas maupun baru menjadi lebih cepat dan informatif bagi pembeli tanpa harus datang ke lokasi terlebih dahulu.
+
+Di sisi lain, aplikasi ini memberikan kendali penuh kepada kamu sebagai admin melalui dashboard manajemen yang aman. Kamu dapat dengan mudah melakukan operasi pengelolaan data (CRUD), seperti menambah stok truk baru, mengedit harga atau status ketersediaan, hingga menghapus unit yang sudah terjual. Dengan menggunakan Flask, seluruh proses ini berjalan ringan dan cepat, memastikan pengelolaan inventaris showroom truk menjadi lebih terorganisir dan efisien.
+
+# Link video Dokumentasi
+Anda bisa cek video demo web nya disini https://youtu.be/grI7_5sbAJA
+
+# Anggota Kelompok
+- Rizky Ardika Mukti          (Menyusun alur dari commit yang lain untuk dijadikan web)
+- Naufal Zanuwar Sudarto      (Menyusun rancangan UI, membuat halaman profile dan halaman new arrivals)
+- Andreas Stephen Hadisuwito  (
+- Lutfi Satria Wicaksana      (
+
+# Flowchart Sistem Flask Commerce
+
 
 ## Instalasi Cepat
 
