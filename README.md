@@ -18,7 +18,7 @@ Anda bisa cek video demo web nya disini https://youtu.be/grI7_5sbAJA
 
 # Flowchart Sistem Flask Commerce
 
-<img width="561" height="812" alt="FlowchartMifthTrue drawio" src="https://github.com/user-attachments/assets/4dfdb9d7-bab8-4fe1-8528-073d2e349ca1" />
+<img width="561" height="812" alt="FlowchartMifthFinal drawio" src="https://github.com/user-attachments/assets/3eda783f-a094-46fe-a1a7-1def86deb02a" />
 
 ## Instalasi Cepat
 
