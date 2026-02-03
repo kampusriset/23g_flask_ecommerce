@@ -10,7 +10,7 @@ Di sisi lain, aplikasi ini memberikan kendali penuh kepada kamu sebagai admin me
 # Link video Dokumentasi
 Anda bisa cek video demo web nya disini https://youtu.be/grI7_5sbAJA
 
-# Anggota Kelompok
+# Anggota Kelompok Benji Sitohang Crew
 - Rizky Ardika Mukti          (Menyusun alur dari commit yang lain untuk dijadikan web)
 - Naufal Zanuwar Sudarto      (Menyusun rancangan UI, membuat halaman profile dan halaman new arrivals)
 - Andreas Stephen Hadisuwito  (Backend dan debugging, seperti route serta database. Membuat flowchart.)
