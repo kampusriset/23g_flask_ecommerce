@@ -13,11 +13,12 @@ Anda bisa cek video demo web nya disini https://youtu.be/grI7_5sbAJA
 # Anggota Kelompok
 - Rizky Ardika Mukti          (Menyusun alur dari commit yang lain untuk dijadikan web)
 - Naufal Zanuwar Sudarto      (Menyusun rancangan UI, membuat halaman profile dan halaman new arrivals)
-- Andreas Stephen Hadisuwito  (
+- Andreas Stephen Hadisuwito  (Backend dan debugging, seperti route serta database)
 - Lutfi Satria Wicaksana      (
 
 # Flowchart Sistem Flask Commerce
 
+<img width="561" height="812" alt="FlowchartMifthTrue drawio" src="https://github.com/user-attachments/assets/4dfdb9d7-bab8-4fe1-8528-073d2e349ca1" />
 
 ## Instalasi Cepat
 
