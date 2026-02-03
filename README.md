@@ -14,7 +14,7 @@ Anda bisa cek video demo web nya disini https://youtu.be/grI7_5sbAJA
 - Rizky Ardika Mukti          (Menyusun alur dari commit yang lain untuk dijadikan web)
 - Naufal Zanuwar Sudarto      (Menyusun rancangan UI, membuat halaman profile dan halaman new arrivals)
 - Andreas Stephen Hadisuwito  (Backend dan debugging, seperti route serta database. Membuat flowchart.)
-- Lutfi Satria Wicaksana      (
+- Luthfi Satria Wicaksana     (Membuat bagian halaman product details, rating, checkout, dan halaman pembayaran)
 
 # Flowchart Sistem Flask Commerce
 
